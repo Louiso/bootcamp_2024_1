@@ -1,13 +1,19 @@
-// MessageContext.jsx
 import { createContext, useContext, useState, useMemo } from 'react';
 import { MESSAGE_TEMPLATES, ORDERED_CHANNELS } from '../constants/messages';
 
 const MessageContext = createContext(null);
 
+export const MODAL_STEPS = {
+  MESSAGE_TYPE: 'MESSAGE_TYPE',
+  CHANNEL_SELECTION: 'CHANNEL_SELECTION',
+  MESSAGE_FORMS: 'MESSAGE_FORMS',
+  CLOSED: 'CLOSED'
+};
+
 export const MessageProvider = ({ children }) => {
   const [messageType, setMessageType] = useState(null);
   const [selectedChannels, setSelectedChannels] = useState([]);
-  const [currentStep, setCurrentStep] = useState(0);
+  const [currentStep, setCurrentStep] = useState(MODAL_STEPS.CLOSED);
   const [messages, setMessages] = useState({});
 
   const orderedSelectedChannels = useMemo(() => {
@@ -16,7 +22,7 @@ export const MessageProvider = ({ children }) => {
 
   const handleSelectMessageType = (type) => {
     setMessageType(type);
-    // Solo inicializamos los mensajes para los canales seleccionados
+    
     const initialMessages = {};
     selectedChannels.forEach(channel => {
       initialMessages[channel] = MESSAGE_TEMPLATES[type][channel];
@@ -26,7 +32,6 @@ export const MessageProvider = ({ children }) => {
 
   const handleSelectChannels = (channels) => {
     setSelectedChannels(channels);
-    // Actualizamos los mensajes cuando se seleccionan los canales
     if (messageType) {
       const initialMessages = {};
       channels.forEach(channel => {
@@ -43,8 +48,42 @@ export const MessageProvider = ({ children }) => {
     }));
   };
 
-  const handleNextStep = () => setCurrentStep(prev => prev + 1);
-  const handlePrevStep = () => setCurrentStep(prev => prev - 1);
+  const handleOpenModal = () => {
+    setCurrentStep(MODAL_STEPS.MESSAGE_TYPE);
+  };
+
+  const handleCloseModals = () => {
+    setCurrentStep(MODAL_STEPS.CLOSED);
+    setMessageType(null);
+    setSelectedChannels([]);
+    setMessages({});
+  };
+
+  const handleNextStep = () => {
+    switch (currentStep) {
+      case MODAL_STEPS.MESSAGE_TYPE:
+        setCurrentStep(MODAL_STEPS.CHANNEL_SELECTION);
+        break;
+      case MODAL_STEPS.CHANNEL_SELECTION:
+        setCurrentStep(MODAL_STEPS.MESSAGE_FORMS);
+        break;
+      default:
+        break;
+    }
+  };
+
+  const handlePrevStep = () => {
+    switch (currentStep) {
+      case MODAL_STEPS.CHANNEL_SELECTION:
+        setCurrentStep(MODAL_STEPS.MESSAGE_TYPE);
+        break;
+      case MODAL_STEPS.MESSAGE_FORMS:
+        setCurrentStep(MODAL_STEPS.CHANNEL_SELECTION);
+        break;
+      default:
+        break;
+    }
+  };
 
   const value = {
     messageType,
@@ -55,7 +94,9 @@ export const MessageProvider = ({ children }) => {
     handleSelectChannels,
     handleUpdateMessage,
     handleNextStep,
-    handlePrevStep
+    handlePrevStep,
+    handleOpenModal,
+    handleCloseModals
   };
 
   return (

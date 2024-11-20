@@ -1,4 +1,3 @@
-// WhatsappForm.jsx
 import { TextField } from '@mui/material';
 import { useMessage } from '../../context/MessageContext';
 import { CHANNEL_TYPES } from '../../constants/messages';

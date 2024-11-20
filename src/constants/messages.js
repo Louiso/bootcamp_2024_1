@@ -1,4 +1,3 @@
-// messages.js
 export const MESSAGE_TYPES = {
   INVITATION: 'invitation',
   REMINDER: 'reminder',

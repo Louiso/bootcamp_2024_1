@@ -1,4 +1,3 @@
-// ChannelSelectorModal/index.jsx
 import {
   Dialog,
   DialogTitle,
@@ -12,11 +11,9 @@ import {
 import { useState } from 'react';
 import { CHANNEL_TYPES, CHANNEL_LABELS } from '../../constants/messages';
 import { useMessage } from '../../context/MessageContext';
-import MessageFormsModal from '../MessageFormsModal';
 
-const ChannelSelectorModal = ({ open, onClose }) => {
-  const [openMessageForms, setOpenMessageForms] = useState(false);
-  const { handleSelectChannels } = useMessage();
+const ChannelSelectorModal = ({ open }) => {
+  const { handleSelectChannels, handleNextStep, handlePrevStep } = useMessage();
   const [selectedChannels, setSelectedChannels] = useState([]);
 
   const _handleChange = (event) => {
@@ -31,64 +28,51 @@ const ChannelSelectorModal = ({ open, onClose }) => {
 
   const _handleNext = () => {
     handleSelectChannels(selectedChannels);
-    setOpenMessageForms(true);
-    onClose();
-  };
-
-  const _handleCloseMessageForms = () => {
-    setOpenMessageForms(false);
+    handleNextStep();
     setSelectedChannels([]);
   };
 
   return (
-    <>
-      <Dialog
-        open={open}
-        onClose={onClose}
-        maxWidth="sm"
-        fullWidth
-      >
-        <DialogTitle>
-          Selección de canales
-        </DialogTitle>
+    <Dialog
+      open={open}
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>
+        Selección de canales
+      </DialogTitle>
 
-        <DialogContent>
-          <FormGroup>
-            {Object.values(CHANNEL_TYPES).map((channel) => (
-              <FormControlLabel
-                key={channel}
-                control={
-                  <Checkbox
-                    checked={selectedChannels.includes(channel)}
-                    onChange={_handleChange}
-                    name={channel}
-                  />
-                }
-                label={CHANNEL_LABELS[channel]}
-              />
-            ))}
-          </FormGroup>
-        </DialogContent>
+      <DialogContent>
+        <FormGroup>
+          {Object.values(CHANNEL_TYPES).map((channel) => (
+            <FormControlLabel
+              key={channel}
+              control={
+                <Checkbox
+                  checked={selectedChannels.includes(channel)}
+                  onChange={_handleChange}
+                  name={channel}
+                />
+              }
+              label={CHANNEL_LABELS[channel]}
+            />
+          ))}
+        </FormGroup>
+      </DialogContent>
 
-        <DialogActions>
-          <Button onClick={onClose}>
-            Atrás
-          </Button>
-          <Button
-            onClick={_handleNext}
-            disabled={selectedChannels.length === 0}
-            variant="contained"
-          >
-            Siguiente
-          </Button>
-        </DialogActions>
-      </Dialog>
-
-      <MessageFormsModal
-        open={openMessageForms}
-        onClose={_handleCloseMessageForms}
-      />
-    </>
+      <DialogActions>
+        <Button onClick={handlePrevStep}>
+          Atrás
+        </Button>
+        <Button
+          onClick={_handleNext}
+          disabled={selectedChannels.length === 0}
+          variant="contained"
+        >
+          Siguiente
+        </Button>
+      </DialogActions>
+    </Dialog>
   );
 };
 

@@ -18,14 +18,19 @@ const FORM_COMPONENTS = {
   [CHANNEL_TYPES.WHATSAPP]: WhatsappForm
 };
 
-const MessageFormsModal = ({ open, onClose }) => {
-  const { selectedChannels, messages, messageType } = useMessage();
+const MessageFormsModal = ({ open }) => {
+  const { 
+    selectedChannels, 
+    messages, 
+    messageType, 
+    handleCloseModals,
+    handlePrevStep
+  } = useMessage();
   const [currentStep, setCurrentStep] = useState(0);
 
   const _handleSubmit = useCallback(() => {
     const selectedMessages = {};
     
-    // Solo incluimos los mensajes de los canales seleccionados
     selectedChannels.forEach(channel => {
       if (messages[channel]) {
         selectedMessages[channel] = messages[channel];
@@ -42,9 +47,9 @@ const MessageFormsModal = ({ open, onClose }) => {
     };
     
     console.log('Payload para el backend:', payload);
-    onClose();
+    handleCloseModals();
     setCurrentStep(0);
-  }, [messages, messageType, onClose, selectedChannels]);
+  }, [messages, messageType, handleCloseModals, selectedChannels]);
 
   const _handleNext = useCallback(() => {
     setCurrentStep(prev => prev + 1);
@@ -54,17 +59,11 @@ const MessageFormsModal = ({ open, onClose }) => {
   const currentChannel = selectedChannels[currentStep];
   const Component = FORM_COMPONENTS[currentChannel];
   
-  const _handleClose = useCallback(() => {
-    onClose();
-    setCurrentStep(0);
-  }, [onClose]);
-
   if (!Component) return null;
 
   return (
     <Dialog
       open={open}
-      onClose={_handleClose}
       maxWidth="sm"
       fullWidth
     >
@@ -77,9 +76,15 @@ const MessageFormsModal = ({ open, onClose }) => {
       </DialogContent>
 
       <DialogActions>
-        <Button onClick={_handleClose}>
-          Cancelar
-        </Button>
+        {currentStep === 0 ? (
+          <Button onClick={handlePrevStep}>
+            Atrás
+          </Button>
+        ) : (
+          <Button onClick={() => setCurrentStep(prev => prev - 1)}>
+            Atrás
+          </Button>
+        )}
         <Button
           onClick={isLastStep ? _handleSubmit : _handleNext}
           variant="contained"

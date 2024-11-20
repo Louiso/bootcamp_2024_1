@@ -1,30 +1,31 @@
 import { Button } from '@mui/material';
-import { useState } from 'react';
 import MessageTypeModal from '../MessageTypeModal';
+import ChannelSelectorModal from '../ChannelSelectorModal';
+import MessageFormsModal from '../MessageFormsModal';
+import { useMessage, MODAL_STEPS } from '../../context/MessageContext';
 
 const SendMessage = () => {
-  const [open, setOpen] = useState(false);
-
-  const _handleClick = () => {
-    setOpen(true);
-  };
-
-  const _handleClose = () => {
-    setOpen(false);
-  };
+  const { currentStep, handleOpenModal } = useMessage();
 
   return (
     <>
       <Button 
         variant="contained" 
-        onClick={_handleClick}
+        onClick={handleOpenModal}
       >
         Enviar mensaje
       </Button>
       
       <MessageTypeModal 
-        open={open} 
-        onClose={_handleClose} 
+        open={currentStep === MODAL_STEPS.MESSAGE_TYPE}
+      />
+      
+      <ChannelSelectorModal 
+        open={currentStep === MODAL_STEPS.CHANNEL_SELECTION}
+      />
+
+      <MessageFormsModal 
+        open={currentStep === MODAL_STEPS.MESSAGE_FORMS}
       />
     </>
   );
