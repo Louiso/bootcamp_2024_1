@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useMemo } from 'react';
+import { createContext, useContext, useState, useMemo, useCallback } from 'react';
 import { MESSAGE_TEMPLATES, ORDERED_CHANNELS } from '../constants/messages';
 
 const MessageContext = createContext(null);
@@ -10,82 +10,105 @@ export const MODAL_STEPS = {
   CLOSED: 'CLOSED'
 };
 
+const STEP_FLOW = {
+  [MODAL_STEPS.MESSAGE_TYPE]: MODAL_STEPS.CHANNEL_SELECTION,
+  [MODAL_STEPS.CHANNEL_SELECTION]: MODAL_STEPS.MESSAGE_FORMS,
+  [MODAL_STEPS.MESSAGE_FORMS]: MODAL_STEPS.MESSAGE_FORMS,
+};
+
+const STEP_BACK_FLOW = {
+  [MODAL_STEPS.CHANNEL_SELECTION]: MODAL_STEPS.MESSAGE_TYPE,
+  [MODAL_STEPS.MESSAGE_FORMS]: MODAL_STEPS.CHANNEL_SELECTION,
+};
+
+const DEFAULT_STATE = {
+  messageType: null,
+  selectedChannels: [],
+  messages: {},
+  currentStep: MODAL_STEPS.CLOSED,
+};
+
 export const MessageProvider = ({ children }) => {
-  const [messageType, setMessageType] = useState(null);
-  const [selectedChannels, setSelectedChannels] = useState([]);
-  const [currentStep, setCurrentStep] = useState(MODAL_STEPS.CLOSED);
-  const [messages, setMessages] = useState({});
+  const [state, setState] = useState(DEFAULT_STATE);
+  const { messageType, selectedChannels, messages, currentStep } = state;
 
-  const orderedSelectedChannels = useMemo(() => {
-    return ORDERED_CHANNELS.filter(channel => selectedChannels.includes(channel));
-  }, [selectedChannels]);
+  const orderedSelectedChannels = useMemo(() => 
+    ORDERED_CHANNELS.filter(channel => selectedChannels.includes(channel))
+  , [selectedChannels]);
 
-  const handleSelectMessageType = (type) => {
-    setMessageType(type);
-    
-    const initialMessages = {};
-    selectedChannels.forEach(channel => {
-      initialMessages[channel] = MESSAGE_TEMPLATES[type][channel];
+  const _resetState = useCallback(() => {
+    setState(DEFAULT_STATE);
+  }, []);
+
+  const handleSelectMessageType = useCallback((type) => {
+    setState(prev => {
+      const initialMessages = {};
+      prev.selectedChannels.forEach(channel => {
+        initialMessages[channel] = MESSAGE_TEMPLATES[type][channel];
+      });
+      return {
+        ...prev,
+        messageType: type,
+        messages: initialMessages,
+      };
     });
-    setMessages(initialMessages);
-  };
+  }, []);
 
-  const handleSelectChannels = (channels) => {
-    setSelectedChannels(channels);
-    if (messageType) {
+  const handleSelectChannels = useCallback((channels) => {
+    setState(prev => {
+      if (!prev.messageType) {
+        return { ...prev, selectedChannels: channels };
+      }
+
       const initialMessages = {};
       channels.forEach(channel => {
-        initialMessages[channel] = MESSAGE_TEMPLATES[messageType][channel];
+        initialMessages[channel] = MESSAGE_TEMPLATES[prev.messageType][channel];
       });
-      setMessages(initialMessages);
-    }
-  };
 
-  const handleUpdateMessage = (channel, data) => {
-    setMessages(prev => ({
+      return {
+        ...prev,
+        selectedChannels: channels,
+        messages: initialMessages,
+      };
+    });
+  }, []);
+
+  const handleUpdateMessage = useCallback((channel, data) => {
+    setState(prev => ({
       ...prev,
-      [channel]: { ...prev[channel], ...data }
+      messages: {
+        ...prev.messages,
+        [channel]: { ...prev.messages[channel], ...data }
+      }
     }));
-  };
+  }, []);
 
-  const handleOpenModal = () => {
-    setCurrentStep(MODAL_STEPS.MESSAGE_TYPE);
-  };
+  const handleOpenModal = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      currentStep: MODAL_STEPS.MESSAGE_TYPE
+    }));
+  }, []);
 
-  const handleCloseModals = () => {
-    setCurrentStep(MODAL_STEPS.CLOSED);
-    setMessageType(null);
-    setSelectedChannels([]);
-    setMessages({});
-  };
+  const handleCloseModals = useCallback(() => {
+    _resetState();
+  }, [_resetState]);
 
-  const handleNextStep = () => {
-    switch (currentStep) {
-      case MODAL_STEPS.MESSAGE_TYPE:
-        setCurrentStep(MODAL_STEPS.CHANNEL_SELECTION);
-        break;
-      case MODAL_STEPS.CHANNEL_SELECTION:
-        setCurrentStep(MODAL_STEPS.MESSAGE_FORMS);
-        break;
-      default:
-        break;
-    }
-  };
+  const handleNextStep = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      currentStep: STEP_FLOW[prev.currentStep] || prev.currentStep
+    }));
+  }, []);
 
-  const handlePrevStep = () => {
-    switch (currentStep) {
-      case MODAL_STEPS.CHANNEL_SELECTION:
-        setCurrentStep(MODAL_STEPS.MESSAGE_TYPE);
-        break;
-      case MODAL_STEPS.MESSAGE_FORMS:
-        setCurrentStep(MODAL_STEPS.CHANNEL_SELECTION);
-        break;
-      default:
-        break;
-    }
-  };
+  const handlePrevStep = useCallback(() => {
+    setState(prev => ({
+      ...prev,
+      currentStep: STEP_BACK_FLOW[prev.currentStep] || prev.currentStep
+    }));
+  }, []);
 
-  const value = {
+  const contextValue = useMemo(() => ({
     messageType,
     selectedChannels: orderedSelectedChannels,
     currentStep,
@@ -97,10 +120,22 @@ export const MessageProvider = ({ children }) => {
     handlePrevStep,
     handleOpenModal,
     handleCloseModals
-  };
+  }), [
+    messageType,
+    orderedSelectedChannels,
+    currentStep,
+    messages,
+    handleSelectMessageType,
+    handleSelectChannels,
+    handleUpdateMessage,
+    handleNextStep,
+    handlePrevStep,
+    handleOpenModal,
+    handleCloseModals
+  ]);
 
   return (
-    <MessageContext.Provider value={value}>
+    <MessageContext.Provider value={contextValue}>
       {children}
     </MessageContext.Provider>
   );

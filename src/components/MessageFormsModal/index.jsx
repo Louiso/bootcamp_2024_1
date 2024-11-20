@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { memo, useCallback, useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -9,13 +9,13 @@ import {
 import { useMessage } from '../../context/MessageContext';
 import EmailForm from './EmailForm';
 import SmsForm from './SmsForm';
-import WhatsappForm from './WhatsappForm';
+import WhatAppForm from './WhatsAppForm';
 import { CHANNEL_TYPES, CHANNEL_LABELS } from '../../constants/messages';
 
 const FORM_COMPONENTS = {
   [CHANNEL_TYPES.EMAIL]: EmailForm,
   [CHANNEL_TYPES.SMS]: SmsForm,
-  [CHANNEL_TYPES.WHATSAPP]: WhatsappForm
+  [CHANNEL_TYPES.WHATSAPP]: WhatAppForm
 };
 
 const MessageFormsModal = ({ open }) => {
@@ -27,33 +27,44 @@ const MessageFormsModal = ({ open }) => {
     handlePrevStep
   } = useMessage();
   const [currentStep, setCurrentStep] = useState(0);
+  
+  useEffect(() => {
+    if (!open) {
+      setCurrentStep(0);
+    }
+    
+    return () => {
+      setCurrentStep(0);
+    };
+  }, [open]);
 
   const _handleSubmit = useCallback(() => {
-    const selectedMessages = {};
+    const selectedMessages = Object.fromEntries(
+      selectedChannels
+        .filter(channel => messages[channel])
+        .map(channel => [channel, messages[channel]])
+    );
     
-    selectedChannels.forEach(channel => {
-      if (messages[channel]) {
-        selectedMessages[channel] = messages[channel];
-      }
-    });
-
     const payload = {
       messageType,
       channels: selectedMessages,
-      variables: {
-        userName: '[userName]',
-        link: '[Link]'
-      }
     };
     
     console.log('Payload para el backend:', payload);
     handleCloseModals();
-    setCurrentStep(0);
   }, [messages, messageType, handleCloseModals, selectedChannels]);
 
   const _handleNext = useCallback(() => {
     setCurrentStep(prev => prev + 1);
   }, []);
+
+  const _handleBack = useCallback(() => {
+    if (currentStep === 0) {
+      handlePrevStep();
+    } else {
+      setCurrentStep(prev => prev - 1);
+    }
+  }, [currentStep, handlePrevStep]);
 
   const isLastStep = currentStep === selectedChannels.length - 1;
   const currentChannel = selectedChannels[currentStep];
@@ -76,15 +87,9 @@ const MessageFormsModal = ({ open }) => {
       </DialogContent>
 
       <DialogActions>
-        {currentStep === 0 ? (
-          <Button onClick={handlePrevStep}>
-            Atrás
-          </Button>
-        ) : (
-          <Button onClick={() => setCurrentStep(prev => prev - 1)}>
-            Atrás
-          </Button>
-        )}
+        <Button onClick={_handleBack}>
+          Atrás
+        </Button>
         <Button
           onClick={isLastStep ? _handleSubmit : _handleNext}
           variant="contained"
@@ -96,4 +101,4 @@ const MessageFormsModal = ({ open }) => {
   );
 };
 
-export default MessageFormsModal;
+export default memo(MessageFormsModal);

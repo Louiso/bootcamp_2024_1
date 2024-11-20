@@ -1,3 +1,4 @@
+import { memo, useState, useCallback } from 'react';
 import { 
   Dialog, 
   DialogTitle, 
@@ -8,7 +9,6 @@ import {
   FormControlLabel,
   Radio
 } from '@mui/material';
-import { useState } from 'react';
 import { MESSAGE_TYPES, MESSAGE_TYPE_LABELS } from '../../constants/messages';
 import { useMessage } from '../../context/MessageContext';
 
@@ -16,15 +16,15 @@ const MessageTypeModal = ({ open }) => {
   const { handleSelectMessageType, handleNextStep, handleCloseModals } = useMessage();
   const [selectedType, setSelectedType] = useState('');
 
-  const _handleChange = (event) => {
+  const _handleChange = useCallback((event) => {
     setSelectedType(event.target.value);
-  };
+  }, []);
 
-  const _handleNext = () => {
+  const _handleNext = useCallback(() => {
     handleSelectMessageType(selectedType);
     handleNextStep();
     setSelectedType('');
-  };
+  }, [handleSelectMessageType, handleNextStep, selectedType]);
 
   return (
     <Dialog 
@@ -69,4 +69,4 @@ const MessageTypeModal = ({ open }) => {
   );
 };
 
-export default MessageTypeModal;
+export default memo(MessageTypeModal);

@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { TextField } from '@mui/material';
 import { useMessage } from '../../context/MessageContext';
 import { CHANNEL_TYPES } from '../../constants/messages';
@@ -12,8 +13,9 @@ const EmailForm = () => {
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+    <div className="flex flex-col gap-8">
       <TextField
+        sx={{ marginTop: '0.5rem' }}
         fullWidth
         label="Asunto"
         name="subject"
@@ -21,6 +23,7 @@ const EmailForm = () => {
         onChange={_handleChange}
       />
       <TextField
+        sx={{ marginTop: '2rem' }}
         fullWidth
         label="Mensaje"
         name="body"
@@ -33,4 +36,4 @@ const EmailForm = () => {
   );
 };
 
-export default EmailForm;
+export default memo(EmailForm);

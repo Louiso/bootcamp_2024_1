@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { Button } from '@mui/material';
 import MessageTypeModal from '../MessageTypeModal';
 import ChannelSelectorModal from '../ChannelSelectorModal';
@@ -31,4 +32,4 @@ const SendMessage = () => {
   );
 };
 
-export default SendMessage;
+export default memo(SendMessage);

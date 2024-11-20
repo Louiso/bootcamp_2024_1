@@ -1,8 +1,9 @@
+import { memo } from 'react';
 import { TextField } from '@mui/material';
 import { useMessage } from '../../context/MessageContext';
 import { CHANNEL_TYPES } from '../../constants/messages';
 
-const WhatsappForm = () => {
+const WhatAppForm = () => {
   const { messages, handleUpdateMessage } = useMessage();
   const whatsappData = messages[CHANNEL_TYPES.WHATSAPP] || { body: '' };
 
@@ -12,6 +13,7 @@ const WhatsappForm = () => {
 
   return (
     <TextField
+      sx={{ marginTop: '0.5rem' }}
       fullWidth
       label="Mensaje"
       name="body"
@@ -23,4 +25,4 @@ const WhatsappForm = () => {
   );
 };
 
-export default WhatsappForm;
+export default memo(WhatAppForm);

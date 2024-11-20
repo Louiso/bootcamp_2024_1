@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import { TextField } from '@mui/material';
 import { useMessage } from '../../context/MessageContext';
 import { CHANNEL_TYPES } from '../../constants/messages';
@@ -12,6 +13,7 @@ const SmsForm = () => {
 
   return (
     <TextField
+      sx={{ marginTop: '0.5rem' }}
       fullWidth
       label="Mensaje"
       name="body"
@@ -23,4 +25,4 @@ const SmsForm = () => {
   );
 };
 
-export default SmsForm;
+export default memo(SmsForm);

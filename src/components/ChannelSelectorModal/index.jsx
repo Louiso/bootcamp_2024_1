@@ -1,3 +1,4 @@
+import { memo, useState, useCallback } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -8,7 +9,6 @@ import {
   FormControlLabel,
   Checkbox
 } from '@mui/material';
-import { useState } from 'react';
 import { CHANNEL_TYPES, CHANNEL_LABELS } from '../../constants/messages';
 import { useMessage } from '../../context/MessageContext';
 
@@ -16,7 +16,7 @@ const ChannelSelectorModal = ({ open }) => {
   const { handleSelectChannels, handleNextStep, handlePrevStep } = useMessage();
   const [selectedChannels, setSelectedChannels] = useState([]);
 
-  const _handleChange = (event) => {
+  const _handleChange = useCallback((event) => {
     const channel = event.target.name;
     setSelectedChannels(prev => {
       if (event.target.checked) {
@@ -24,13 +24,13 @@ const ChannelSelectorModal = ({ open }) => {
       }
       return prev.filter(ch => ch !== channel);
     });
-  };
+  }, []);
 
-  const _handleNext = () => {
+  const _handleNext = useCallback(() => {
     handleSelectChannels(selectedChannels);
     handleNextStep();
     setSelectedChannels([]);
-  };
+  }, [handleSelectChannels, handleNextStep, selectedChannels]);
 
   return (
     <Dialog
@@ -76,4 +76,4 @@ const ChannelSelectorModal = ({ open }) => {
   );
 };
 
-export default ChannelSelectorModal;
+export default memo(ChannelSelectorModal);
