@@ -1,4 +1,3 @@
-// MessageFormsModal/index.jsx
 import { useCallback, useState } from 'react';
 import {
   Dialog,
@@ -24,9 +23,18 @@ const MessageFormsModal = ({ open, onClose }) => {
   const [currentStep, setCurrentStep] = useState(0);
 
   const _handleSubmit = useCallback(() => {
+    const selectedMessages = {};
+    
+    // Solo incluimos los mensajes de los canales seleccionados
+    selectedChannels.forEach(channel => {
+      if (messages[channel]) {
+        selectedMessages[channel] = messages[channel];
+      }
+    });
+
     const payload = {
       messageType,
-      channels: messages,
+      channels: selectedMessages,
       variables: {
         userName: '[userName]',
         link: '[Link]'
@@ -36,7 +44,7 @@ const MessageFormsModal = ({ open, onClose }) => {
     console.log('Payload para el backend:', payload);
     onClose();
     setCurrentStep(0);
-  }, [messages, messageType, onClose]);
+  }, [messages, messageType, onClose, selectedChannels]);
 
   const _handleNext = useCallback(() => {
     setCurrentStep(prev => prev + 1);

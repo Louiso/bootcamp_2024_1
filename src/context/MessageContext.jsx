@@ -1,3 +1,4 @@
+// MessageContext.jsx
 import { createContext, useContext, useState, useMemo } from 'react';
 import { MESSAGE_TEMPLATES, ORDERED_CHANNELS } from '../constants/messages';
 
@@ -10,25 +11,35 @@ export const MessageProvider = ({ children }) => {
   const [messages, setMessages] = useState({});
 
   const orderedSelectedChannels = useMemo(() => {
-    if (!selectedChannels.length) return [];
-    return ORDERED_CHANNELS.filter(channelId => selectedChannels.includes(channelId));
+    return ORDERED_CHANNELS.filter(channel => selectedChannels.includes(channel));
   }, [selectedChannels]);
 
   const handleSelectMessageType = (type) => {
     setMessageType(type);
-    // Asegurarse de usar los IDs correctos al establecer los mensajes
-    const templates = MESSAGE_TEMPLATES[type] || {};
-    setMessages(templates);
+    // Solo inicializamos los mensajes para los canales seleccionados
+    const initialMessages = {};
+    selectedChannels.forEach(channel => {
+      initialMessages[channel] = MESSAGE_TEMPLATES[type][channel];
+    });
+    setMessages(initialMessages);
   };
 
   const handleSelectChannels = (channels) => {
     setSelectedChannels(channels);
+    // Actualizamos los mensajes cuando se seleccionan los canales
+    if (messageType) {
+      const initialMessages = {};
+      channels.forEach(channel => {
+        initialMessages[channel] = MESSAGE_TEMPLATES[messageType][channel];
+      });
+      setMessages(initialMessages);
+    }
   };
 
-  const handleUpdateMessage = (channelId, data) => {
+  const handleUpdateMessage = (channel, data) => {
     setMessages(prev => ({
       ...prev,
-      [channelId]: { ...prev[channelId], ...data }
+      [channel]: { ...prev[channel], ...data }
     }));
   };
 
