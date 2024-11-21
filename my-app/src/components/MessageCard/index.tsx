@@ -1,5 +1,6 @@
 import React, { FC, useCallback, useMemo, useState } from "react";
 import { produce } from "immer";
+import { toast } from "sonner";
 import {
   ChannelType,
   MessageType,
@@ -41,6 +42,11 @@ const MessageCard: FC<MessageCardProps> = ({ onClose }) => {
   };
 
   const _handleClickNext = () => {
+    if (currentSection.code === SectionCode.SelectMessageType && !messageType) {
+      toast.error("Por favor, selecciona un tipo de mensaje.");
+      return;
+    }
+
     const newCurrentSectionIndex = currentSectionIndex + 1;
     let newSections = Array.from(sections);
 
@@ -75,6 +81,7 @@ const MessageCard: FC<MessageCardProps> = ({ onClose }) => {
 
   const _handleChangeMessageType = ({ target: { value } }: React.ChangeEvent<HTMLInputElement>) => {
     setMessageType(value as IMessageType);
+    toast.success(`Tipo de mensaje seleccionado: ${value}`);
   };
 
   const _handleChangeChannelItem = useCallback(
@@ -86,9 +93,11 @@ const MessageCard: FC<MessageCardProps> = ({ onClose }) => {
             .map((channelType) => newChannels.find((channel) => channel.type === channelType)!)
             .filter(Boolean)
         );
+        toast.success(`Canal seleccionado: ${name}`);
       } else {
         const newChannels = channels.filter((channel) => channel.type !== name);
         setChannels(newChannels);
+        toast.success(`Canal deseleccionado: ${name}`);
       }
     },
     [channels]
@@ -109,6 +118,14 @@ const MessageCard: FC<MessageCardProps> = ({ onClose }) => {
   const _handleSubmit = () => {
     const obj = { userIds: [], messageType, channels };
     console.log("obj", obj);
+    toast.promise(
+      new Promise((resolve) => setTimeout(resolve, 2000)),
+      {
+        loading: "Enviando mensaje...",
+        success: "Mensaje enviado con éxito",
+        error: "Error al enviar el mensaje",
+      }
+    );
   };
 
   const content = useMemo(() => {
@@ -127,19 +144,19 @@ const MessageCard: FC<MessageCardProps> = ({ onClose }) => {
   }, [currentSection.code, messageType, channels, currentChannelIndex, _handleChangeMessageType, _handleChangeChannelItem, _handleChangeText]);
 
   return (
-    <div className="message-card">
-      <h2>{currentSection.title}</h2>
+    <div className="message-card p-5 border rounded-md w-[390px] h-[351px]">
+      <h2 className="font-bold text-lg letra mb-5">{currentSection.title}</h2>
       <div>{content}</div>
-      <div className="actions">
+      <div className="flex actions space-x-[6px] mt-[24px] justify-end">
         {currentSectionIndex === 0 ? (
-          <button onClick={onClose}>Cancelar</button>
+          <button className="w-[102px] h-[40px] border text-[#6EB1EF] border-[#6EB1EF] rounded-md letra text-sm" onClick={onClose}>Cancelar</button>
         ) : (
-          <button onClick={_handleClickPrev}>Atrás</button>
+          <button className="w-[102px] h-[40px] border text-[#6EB1EF] border-[#6EB1EF] rounded-md letra text-sm" onClick={_handleClickPrev}>Atrás</button>
         )}
         {currentSectionIndex === sections.length - 1 && currentSection.code !== SectionCode.SelectChannelType ? (
-          <button onClick={_handleSubmit}>Enviar</button>
+          <button className="w-[102px] h-[40px] border rounded-md bg-[#6EB1EF] text-white letra text-sm" onClick={_handleSubmit}>Enviar</button>
         ) : (
-          <button onClick={_handleClickNext}>Siguiente</button>
+          <button className="w-[102px] h-[40px] border rounded-md bg-[#6EB1EF] text-white letra text-sm" onClick={_handleClickNext}>Siguiente</button>
         )}
       </div>
     </div>

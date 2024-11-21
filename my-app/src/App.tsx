@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import MessageCard from './components/MessageCard';
+import { useState } from "react";
+import MessageCard from "./components/MessageCard";
 
 function App() {
   const [open, setOpen] = useState(false);
@@ -13,8 +13,15 @@ function App() {
   };
 
   return (
-    <div className="App">
-      <button onClick={_handleClick}>Abrir</button>
+    <div className="App flex items-center justify-center min-h-screen">
+      {!open && (
+        <button
+          className="bg-[#6EB1EF] letra text-sm px-[22px] h-[40px] rounded-md text-white"
+          onClick={_handleClick}
+        >
+          Message App
+        </button>
+      )}
       {open && (
         <div className="dialog">
           <div className="dialog-content">
