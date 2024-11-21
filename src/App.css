@@ -1,0 +1,130 @@
+
+body {
+  background-color: #f7f7f7;  
+  color: #333;  
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  width: 100%;
+  max-width: 900px; 
+  padding: 20px;
+  background-color: white; 
+  border-radius: 10px;  
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); 
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+button {
+  background-color: #00bcd4; 
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  margin-top: 20px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 16px;
+}
+
+button:hover {
+  background-color: #0097a7; 
+}
+
+h1, h2 {
+  color: #00bcd4; 
+  margin-bottom: 20px;
+  text-align: center;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px; 
+}
+
+.panel {
+  margin-bottom: 20px;
+}
+
+input[type="radio"], input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+label {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 16px;
+}
+
+label input {
+  margin-right: 10px;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 100%;
+}
+
+.panel-message {
+  margin-bottom: 20px;
+}
+
+.panel-message input,
+.panel-message textarea {
+  width: 100%;
+  padding: 10px;
+  margin-top: 10px;
+  font-size: 16px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f9f9f9;
+}
+
+.panel-message textarea {
+  height: 120px;
+  resize: vertical;
+}
+
+.panel-message button {
+  width: 100%;
+  max-width: 120px;
+  padding: 10px;
+  margin-top: 20px;
+}
+
+.modal-content {
+  background-color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 600px;
+  border: 1px solid #e0e0e0;
+}
+
+.panel {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0; 
+  border-radius: 8px;
+}
+
+.panel-message {
+  margin-bottom: 20px;
+  padding: 15px;
+  border: 1px solid #e0e0e0; 
+  border-radius: 8px; 
+}
