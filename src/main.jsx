@@ -4,7 +4,7 @@ import App from "./App";
 import "./index.css";
 
 import { ThemeProvider } from "@material-tailwind/react";
-import { MensajeProvider } from "./context/MensajeContext";
+import { MensajeProvider } from "./context/MesajeContext";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
@@ -13,5 +13,5 @@ ReactDOM.createRoot(document.getElementById("root")).render(
         <App />
       </MensajeProvider>
     </ThemeProvider>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
