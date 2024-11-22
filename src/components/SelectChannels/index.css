@@ -1,0 +1,35 @@
+.channel-container {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 5px 15px;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    transition: border-color 0.3s ease, color 0.3s ease;
+    cursor: pointer;
+  }
+  
+  .channel-container.selected {
+    border: 1px solid #6EB1EF;
+    color: #6EB1EF;
+  }
+  
+  .channel-container:hover {
+    border-color: #6EB1EF;
+  }
+
+  .text-label{
+    color: gray;
+  }
+
+  .text-selected{
+    color: #6EB1EF;
+  }
+  
+  .step-text {
+    font-family: Roboto;
+    font-size: 18px;
+    font-weight: 800;
+    margin-bottom: 20px;
+  }

@@ -1,0 +1,35 @@
+.user-container {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  transition: border-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.user-container.selected {
+  border: 1px solid #6eb1ef;
+  color: #6eb1ef;
+}
+
+.user-container:hover {
+  border-color: #6eb1ef;
+}
+
+.text-label {
+  color: gray;
+}
+
+.text-selected {
+  color: #6eb1ef;
+}
+
+.step-text {
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
