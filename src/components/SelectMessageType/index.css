@@ -1,0 +1,33 @@
+.radio-container {
+  width: 100%;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  padding: 5px 15px;
+  margin-bottom: 10px;
+  transition: border-color 0.3s ease, color 0.3s ease;
+  cursor: pointer;
+}
+
+.radio-container .MuiFormControlLabel-label {
+  color: #757575;
+  transition: color 0.3s ease;
+}
+
+.radio-container.selected {
+  border: 2px solid #6eb1ef;
+}
+
+.radio-container.selected .MuiFormControlLabel-label {
+  color: #6eb1ef;
+}
+
+.radio-container:hover {
+  border-color: #6eb1ef;
+}
+
+.step-text {
+  font-family: Roboto;
+  font-size: 18px;
+  font-weight: 800;
+  margin-bottom: 20px;
+}
