@@ -1,0 +1,20 @@
+/* .App {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.App div {
+  width: 70%;
+  margin: 0 auto;
+  text-align: center;
+}
+ */
+ .App {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+ }
+ 
